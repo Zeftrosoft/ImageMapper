@@ -1,0 +1,12 @@
+.enroll_image, .list_image {
+  margin-bottom: 10px;
+}
+.enroll_image.active {
+  border: #29a745 5px solid;
+}
+.list_image.active {
+  border: #29a745 7px solid;
+}
+.list_image.done {
+  border: blue 5px solid;
+}
