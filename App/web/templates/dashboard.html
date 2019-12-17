@@ -11,7 +11,7 @@
         <div class="col-sm-12" style="text-align: center;">
           <div class="jumbotron jumbotron-fluid">
             <div class="container">
-              <h1 class="m-0 text-dark"> Image Mapper By ZeftroSoft</h1>
+              <h1 class="m-0 text-dark"> UNoWho Visualization Tool </h1>
             </div>
           </div>
           
@@ -21,7 +21,7 @@
 
     <div class="row">
       <!-- /.col-md-6 -->
-      <div class="col-md-3 col-lg-3">
+      <div class="col-md-9 col-lg-9">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Image Used For Prediction</h3>
@@ -38,46 +38,58 @@
           </div>
           <!-- /.card-footer -->
         </div>
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Predicted Images</h3>
-          </div>
-          <!-- /.card-header -->
-          <div class="card-body p-0" id="list_container">
-            <h3>Loading...</h3>
-
-            <!-- /.table-responsive -->
-          </div>
-          <!-- /.card-body -->
-          <!-- <div class="card-footer clearfix">
-            <a href="javascript:void(0)" class="btn btn-sm btn-success float-left">Previous</a>
-            <a href="javascript:void(0)" class="btn btn-sm btn-success float-right">Next</a>
-          </div> -->
-          <!-- /.card-footer -->
-        </div>
+        
       </div>
-      <div class="col-md-9 col-lg-9">
+      <div class="col-md-3 col-lg-3">
+        <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Predicted Images</h3>
+              <button class="btn btn-success float-right" style="margin-right:10px" onClick="refresh()">Refresh</button>
+            </div>
+            <div class="card-body scrollable">
+              <div class="row" id="list_container">
+                  <h3>Loading...</h3>
+              </div>
+              
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.card-header -->
+   
+            <!-- /.card-body -->
+            <!-- <div class="card-footer clearfix">
+              <a href="javascript:void(0)" class="btn btn-sm btn-success float-left">Previous</a>
+              <a href="javascript:void(0)" class="btn btn-sm btn-success float-right">Next</a>
+            </div> -->
+            <!-- /.card-footer -->
+          </div>
+      </div>
+      <!-- /.col-md-6 -->
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <div class="card card-primary">
           <div class="card-header">
             <h3 class="card-title">Enrolled Images</h3>
-            <button class="btn btn-warning float-right" onClick="mapImageClicked()">Map Selections</button>
-            <button class="btn btn-success float-right" style="margin-right:10px" onClick="refresh()">Refresh</button>
+            <!-- <button class="btn btn-warning float-right" onClick="mapImageClicked()">Map Selections</button> -->
+            <button class="btn btn-success float-right" style="margin-right:10px;" onClick="refreshEnrolled()">Show Enrolled</button>
+            <span class="float-right" style="margin-right:10px; margin-top:7px" id="showing_enrolled"></span>
+            <span class="float-right" style="margin-right:10px; margin-top:7px" id="perpage_enrolled"></span>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
             <div class="row" id="enroll_container">
-              <div class="col-sm-6">
-               <h3>Loading...</h3>
-              </div>
+              
              
             </div>
             
             <!-- /.table-responsive -->
           </div>
+          <div class="card-footer clearfix">
+            <a href="javascript:enrollImagePreviousClicked()" id='previousEnrollButton' class="btn btn-sm btn-success float-left">Previous</a>
+            <a href="javascript:enrollImageNextClicked()" id='nextEnrollButton' class="btn btn-sm btn-success float-right">Next</a>
+          </div>
         </div>
       </div>
-
-      <!-- /.col-md-6 -->
     </div>
     
     <!-- /.row -->

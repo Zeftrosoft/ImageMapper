@@ -1,13 +1,18 @@
 var enrolled_data = []
+var paged_enrolled_data = []
 var predicted_data = []
+var enroll_per_page = 50
 
 var image_list_data = []
 var default_campaign = {
   list_image: "",
   enroll_image: "",
 }
+var enrol_pager = {};
 
 var current_working_set = ''
+$('#previousEnrollButton').hide()
+$('#nextEnrollButton').hide()
 
 var predictionContainer = "#prediction_container"
 var listConatainer = "#list_container"
@@ -37,7 +42,13 @@ function getEnrolledData(querry) {
         }
         else {
           enrolled_data = json.details
-          initEnrolled()
+          setPage(enrol_pager.currentPage);
+          if(enrol_pager.currentPage >= enrol_pager.totalPages) {
+            $('#nextEnrollButton').hide()
+          } else {
+            $('#nextEnrollButton').show()
+          }
+
         }
     },
     error: function (data) {
@@ -47,16 +58,17 @@ function getEnrolledData(querry) {
   });
 }
 
-function initEnrolled() {
+function initEnrolled(edata) {
   var images = []
-  $.each(enrolled_data, function (indx, data) {
+  $.each(edata, function (indx, data) {
     var enrol_dom = '<div class="col-sm-2">'
     enrol_dom+='<img class="img-fluid enroll_image" class="enroll_image" src="'+data+'" alt="Photo" id="enrol_'+indx+'" onClick="enrollImageClicked(\''+data+'\','+indx+')">'
+    var name = data.split('/')[3]
+    enrol_dom+='<label for="enrol_'+indx+'">'+name+'</label>'
     enrol_dom+='</div>'
     images.push(enrol_dom) 
   })
   $(enrollContainer).html(images)
-  
 }
 function getPredictionDataUrl() {
   return used_host + '/prediction_data'
@@ -139,26 +151,32 @@ function initPrediction(pdata) {
   prediction_image_dom += '<img class="img-fluid" src="'+pdata.image_path+'" alt="Photo"></img>'
   prediction_image_dom += '<a/>'
   $(predictionContainer).html(prediction_image_dom)
+  
   $.each(pdata.recognised_images, function (indx,image_data) {
+    var predict_dom = '<div class="col-md-12">'
+    predict_dom+='<img class="img-fluid enroll_image" class="enroll_image" src="'+image_data.recognised_image+'" alt="Photo" id="list_'+indx+'" onClick="imageListClicked(\''+image_data.mapped_image+'\','+indx+')">'
+    var name = image_data.recognised_image.split('/')[3]
+    predict_dom+='<label for="list_'+indx+'">'+name+'</label>'
+    predict_dom+='</div>'
     var done = image_data.mapped_image!='TBD'?'done':''
-    prediction_list_dom.push('<img class="img-fluid list_image '+done+'" src="'+image_data.recognised_image+'" id="list_'+indx+'" alt="Photo" onClick="imageListClicked(\''+image_data.mapped_image+'\','+indx+')" ></img>')
+    prediction_list_dom.push(predict_dom)
   })
   $(listConatainer).html(prediction_list_dom)
 }
 function enrollImageClicked(data, indx) {
-  $(enrollContainer+'>div>img').removeClass('active')
-  $('#enrol_'+indx).hasClass('active')?$('#enrol_'+indx).removeClass('active'):$('#enrol_'+indx).addClass('active')
+  // $(enrollContainer+'>div>img').removeClass('active')
+  // $('#enrol_'+indx).hasClass('active')?$('#enrol_'+indx).removeClass('active'):$('#enrol_'+indx).addClass('active')
 }
 function imageListClicked(data, indx) {
-  $(listConatainer+'>img').removeClass('active')
-  $('#list_'+indx).hasClass('active')?$('#list_'+indx).removeClass('active'):$('#list_'+indx).addClass('active')
-  $(enrollContainer+'>div>img').removeClass('active')
-  if($(enrollContainer+'>div>img[src$="'+data+'"]').length>0) {
-    $(enrollContainer+'>div>img[src$="'+data+'"]').addClass('active')
-    $('html, body').animate({
-        scrollTop: $(enrollContainer+'>div>img[src$="'+data+'"]').offset().top
-    }, 100);
-  }
+  // $(listConatainer+'>img').removeClass('active')
+  // $('#list_'+indx).hasClass('active')?$('#list_'+indx).removeClass('active'):$('#list_'+indx).addClass('active')
+  // $(enrollContainer+'>div>img').removeClass('active')
+  // if($(enrollContainer+'>div>img[src$="'+data+'"]').length>0) {
+  //   $(enrollContainer+'>div>img[src$="'+data+'"]').addClass('active')
+  //   $('html, body').animate({
+  //       scrollTop: $(enrollContainer+'>div>img[src$="'+data+'"]').offset().top
+  //   }, 100);
+  // }
  
 }
 function mapImageClicked() {
@@ -208,10 +226,99 @@ function predictionImagePreviousClicked() {
   }
   
 }
+
+function enrollImageNextClicked() {
+  var page_to_set = enrol_pager.currentPage + 1
+  setPage(page_to_set)
+  if(page_to_set >= enrol_pager.totalPages) {
+    $('#nextEnrollButton').hide()
+  } else if(page_to_set >= 2) {
+    $('#previousEnrollButton').show()
+  }
+}
+function enrollImagePreviousClicked() {
+  var page_to_set = enrol_pager.currentPage - 1
+  setPage(page_to_set)
+  if(page_to_set < 2) {
+    $('#previousEnrollButton').hide()
+  } else if(page_to_set < enrol_pager.totalPages) { 
+    $('#nextEnrollButton').show()
+  }
+}
+
+function setPage(page, reset = false) {
+  if (page < 1 || page > this.enrol_pager.totalPages && !reset) {
+    console.log('Returning');
+    return;
+  }
+  // get pager object from service
+  enrol_pager = getPager(enrolled_data.length, page, enroll_per_page);
+
+  // get current page of items
+  paged_enrolled_data = enrolled_data.slice(enrol_pager.startIndex, enrol_pager.endIndex + 1);
+  initEnrolled(paged_enrolled_data)
+  $('#showing_enrolled').html(`<b>Total Images: ${enrolled_data.length}<b/>`)
+  $('#perpage_enrolled').html(`<b>Images Per Page: ${enroll_per_page}<b/> |`)
+}
+
 function refresh() {
-  getEnrolledData()
   getPredictionData()
   current_page = 1;
 }
+function refreshEnrolled() {
+  getEnrolledData()
+}
 
 refresh()
+
+function getPager(totalItems, currentPage = 1, pageSize = 3) {
+  // calculate total pages
+  var totalPages = Math.ceil(totalItems / pageSize);
+
+  // ensure current page isn't out of range
+  if (currentPage < 1) {
+      currentPage = 1;
+  } else if (currentPage > totalPages) {
+      currentPage = totalPages;
+  }
+
+  var startPage, endPage;
+  if (totalPages <= 10) {
+      // less than 10 total pages so show all
+      startPage = 1;
+      endPage = totalPages;
+  } else {
+      // more than 10 total pages so calculate start and end pages
+      if (currentPage <= 6) {
+          startPage = 1;
+          endPage = 10;
+      } else if (currentPage + 4 >= totalPages) {
+          startPage = totalPages - 9;
+          endPage = totalPages;
+      } else {
+          startPage = currentPage - 5;
+          endPage = currentPage + 4;
+      }
+  }
+
+  // calculate start and end item indexes
+  var startIndex = (currentPage - 1) * pageSize;
+  var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+
+  // create an array of pages to ng-repeat in the pager control
+  var pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
+
+  // return object with all pager properties required by the view
+  return {
+      totalItems: totalItems,
+      currentPage: currentPage,
+      pageSize: pageSize,
+      totalPages: totalPages,
+      startPage: startPage,
+      endPage: endPage,
+      startIndex: startIndex,
+      endIndex: endIndex,
+      pages: pages
+  };
+}
+

@@ -10,3 +10,7 @@
 .list_image.done {
   border: blue 5px solid;
 }
+.scrollable {
+  max-height: 700px;
+  overflow: auto;
+}
