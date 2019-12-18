@@ -151,12 +151,11 @@ function initPrediction(pdata) {
   prediction_image_dom += '<img class="img-fluid" src="'+pdata.image_path+'" alt="Photo"></img>'
   prediction_image_dom += '<a/>'
   $(predictionContainer).html(prediction_image_dom)
-  $('#predict_img').text(pdata.image_path)
   
   $.each(pdata.recognised_images, function (indx,image_data) {
     var predict_dom = '<div class="col-md-12">'
-    predict_dom+='<img class="img-fluid enroll_image" class="enroll_image" src="'+image_data+'" alt="Photo" id="list_'+indx+'>'
-    var name = image_data.split('/')[3]
+    predict_dom+='<img class="img-fluid enroll_image" class="enroll_image" src="'+image_data.recognised_image+'" alt="Photo" id="list_'+indx+'" onClick="imageListClicked(\''+image_data.mapped_image+'\','+indx+')">'
+    var name = image_data.recognised_image.split('/')[3]
     predict_dom+='<label for="list_'+indx+'">'+name+'</label>'
     predict_dom+='</div>'
     var done = image_data.mapped_image!='TBD'?'done':''

@@ -35,7 +35,19 @@ def mapper():
         'msg':'',
         'title': 'Mapper'
     }
-    return render_template('dashboard.html', data=res)
+    if request.method == 'POST':
+        image_map = {
+            'image_path': request.form['image_path'],
+            'recognised_image': request.form['recognised_image'],
+            'mapped_image': request.form['mapped_image']
+        }
+        out = helper.mapPrediction(image_map)
+        res['status'] = out
+        res['msg'] = 'Success!' if out else 'Nothing Saved'
+        res['details'] = []
+        return jsonify(res)
+    else:
+        return render_template('dashboard.html', data=res)
 
 if __name__ == "__main__":
     app.run(debug=True)
