@@ -13,9 +13,8 @@ class DBHelper:
   def getEnrolled(self):
     self.init()
     for dir_name in sorted(os.listdir(self.path_to_enrolled )):
-      set_path_dir = self.set_path+dir_name
-      for file_name in sorted(os.listdir(os.path.join(self.path_to_enrolled ,dir_name))):
-        self.enrolled.append(set_path_dir+'/'+file_name)
+      set_path_dir = self.set_path+dir_name + '/'+ sorted(os.listdir(os.path.join(self.path_to_enrolled ,dir_name)))[0]
+      self.enrolled.append(set_path_dir)
     return self.enrolled
 
   def getPredictionData(self):
